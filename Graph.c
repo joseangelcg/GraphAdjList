@@ -12,6 +12,31 @@ void addStudent(tstGraph *g,
                 const char *ID, 
                 tenStuStatus status);
 
+void addCourse(tstGraph *g,
+                char *CourseID,
+                char *name);
+
+void addProfessor(tstGraph *g,
+                char *name,
+                char *PLastName,
+                char *MLastName,
+                char *ID);
+
+void addDegree(tstGraph *g,
+                char *name,
+                char *acronym);
+
+void addArea(tstGraph *g,
+                char *name);
+
+void addCampus(tstGraph *g,
+                char *name,
+                char *location);
+
+void addExtra(tstGraph *g,
+                char *name);
+
+
 void printGraph(tstGraph *g);
 
 void main(void){
@@ -23,6 +48,8 @@ void main(void){
     addStudent(g,"Jordan Abel","Avalos","Bueno","A01227033",Active);
     addStudent(g,"Fabian","Galindo","Sanchez","A01226208",Active);
     addStudent(g,"Jorge Ernesto","Castaneda","Hernandez","A01225503",Active);
+    addProfessor(g,"Martin","Sinsel","Gonzalez","L01227584");
+    addCourse(g,"TC1207","Matematicas IV");
 
     printGraph(g);
 }
@@ -32,12 +59,28 @@ void printGraph(tstGraph *g){
 
 
     tstAdjElem *tmp= g->adjListHead;
-    printf("Address is:%p\n",tmp);
+    printf("Number of V::%i\n",g->V);
+    printf("Number of E::%i\n",g->E);
 
     while(tmp != NULL_PTR){
-        printf("Node type is:%i\n", *((tenNodeType* )(tmp->vertex)) );
-        printf("Name of student is%s\n", ((tstStudentV*)(tmp->vertex))->name );
-        printf("ID of student is%s\n\n", ((tstStudentV*)(tmp->vertex))->ID );
+        switch(getNodeType(tmp)){
+
+            case student:
+                printf("Name of student is%s\n", getStudentVertex(tmp)->name );
+                printf("ID of student is%s\n\n", getStudentVertex(tmp)->ID );
+                break;
+
+            case professor:
+                printf("Name of professor is%s\n", getProfessorVertex(tmp)->name );
+                printf("ID of professor is%s\n\n", getProfessorVertex(tmp)->ID );
+                break;
+
+            case course:
+                printf("Name of course is:%s\n",getCourseVertex(tmp)->name);
+                printf("Course ID is:%s\n\n",getCourseVertex(tmp)->CourseID);
+                break;
+        }
+
         tmp=tmp->next;
 
     }
@@ -117,9 +160,190 @@ void addStudent(tstGraph *g,
 
     //add vertex to graph
 
-    printf("PLastName of student added is:%s\n",tmp->PLastName);
     addVertex(g, (void*) tmp);
          
+}
+
+void addCourse(tstGraph *g,
+                char *CourseID,
+                char *name){
+    tstCourseV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstCourseV*) safeMalloc(sizeof(tstCourseV));
+    
+    str = (char*) safeMalloc(strlen(CourseID) 
+                    + strlen(name)+2); 
+
+
+    //add parameters to node
+    tmp->NodeType=course;
+
+    strncpy(str,CourseID,strlen(CourseID)+1);
+    tmp->CourseID=str;
+
+    str +=strlen(CourseID)+1;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+}
+
+void addProfessor(tstGraph *g,
+                char *name,
+                char *PLastName,
+                char *MLastName,
+                char *ID){
+
+    tstProfessorV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstProfessorV*) safeMalloc(sizeof(tstProfessorV));
+    
+    str = (char*) safeMalloc(strlen(name) 
+                    + strlen(PLastName) 
+                    + strlen(MLastName) 
+                    + strlen(ID) + 4);
+
+
+    //add parameters to node
+    tmp->NodeType=professor;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    str +=strlen(name)+1;
+
+    strncpy(str,PLastName,strlen(PLastName)+1);
+    tmp->PLastName=str;
+
+    str += strlen(PLastName)+1;
+
+    strncpy(str,MLastName,strlen(MLastName)+1);
+    tmp->MLastName=str;
+
+    str += strlen(MLastName)+1;
+
+    strncpy(str,ID,strlen(ID)+1);
+    tmp->ID=str;
+
+    
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+        
+}
+
+void addDegree(tstGraph *g,
+                char *name,
+                char *acronym){
+
+    tstDegreeV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstDegreeV*) safeMalloc(sizeof(tstDegreeV));
+    
+    str = (char*) safeMalloc(strlen(name) 
+                    + strlen(acronym)+2); 
+
+
+    //add parameters to node
+    tmp->NodeType=degree;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    str +=strlen(name)+1;
+
+    strncpy(str,acronym,strlen(acronym)+1);
+    tmp->acronym=str;
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+        
+}
+
+void addArea(tstGraph *g,
+                char *name){
+    tstAreaV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstAreaV*) safeMalloc(sizeof(tstAreaV));
+    
+    str = (char*) safeMalloc(strlen(name) + 1); 
+
+
+    //add parameters to node
+    tmp->NodeType=area;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+}
+
+void addCampus(tstGraph *g,
+                char *name,
+                char *location){
+    
+    tstCampusV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstCampusV*) safeMalloc(sizeof(tstCampusV));
+    
+    str = (char*) safeMalloc(strlen(name) 
+                    + strlen(location)+2); 
+
+
+    //add parameters to node
+    tmp->NodeType=campus;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    str +=strlen(name)+1;
+
+    strncpy(str,location,strlen(location)+1);
+    tmp->location=str;
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+}
+
+void addExtra(tstGraph *g,
+                char *name){
+    tstExtraV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstExtraV*) safeMalloc(sizeof(tstExtraV));
+    
+    str = (char*) safeMalloc(strlen(name) + 1); 
+
+
+    //add parameters to node
+    tmp->NodeType=area;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    //add vertex to graph
+
+    addVertex(g, (void*) tmp);
+
 }
 
 tstGraph* createGraph(void){

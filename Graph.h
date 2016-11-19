@@ -11,7 +11,15 @@
 #define NULL_PTR    NULL
 
 /***********MACROS***********/
+#define getNodeType(tmp)     *((tenNodeType* )(tmp->vertex))
 
+#define getStudentVertex(tmp)       ((tstStudentV*)(tmp->vertex))
+#define getCourseVertex(tmp)        ((tstCourseV*)(tmp->vertex))
+#define getProfessorVertex(tmp)     ((tstProfessorV*)(tmp->vertex))
+#define getDegreeVertex(tmp)        ((tstDegreeV*)(tmp->vertex))
+#define getAreaVertex(tmp)          ((tstAreaV*)(tmp->vertex))
+#define getCampusVertex(tmp)        ((tstCampusV*)(tmp->vertex))
+#define getExtraVertex(tmp)         ((tstExtraV*)(tmp->vertex))
 /**********TYPEDEFS**************/
 
 typedef enum relation{
