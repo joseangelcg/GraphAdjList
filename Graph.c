@@ -3,127 +3,141 @@
 #include "Graph.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
-void printGraph(tstGraph* graph);
-void setVertex(tstGraph* g, uint16 vertex, DT_VERTEX data);
+void addStudent(tstGraph *g, 
+                const char *name, 
+                const char *PLastName, 
+                const char *MLastName, 
+                const char *ID, 
+                tenStuStatus status);
 
+void printGraph(tstGraph *g);
 
 void main(void){
 
-    tstGraph* graph;
+    tstGraph* g;
 
-    graph=createGraph(10);
+    g=createGraph();
 
-    printf("graph created\n");
+    addStudent(g,"Jordan Abel","Avalos","Bueno","A01227033",Active);
+    addStudent(g,"Fabian","Galindo","Sanchez","A01226208",Active);
+    addStudent(g,"Jorge Ernesto","Castaneda","Hernandez","A01225503",Active);
 
-    setVertex(graph,0,13);
-    setVertex(graph,1,14);
-    setVertex(graph,2,15);
-    setVertex(graph,3,16);
-    setVertex(graph,4,17);
-    setVertex(graph,5,18);
-    setVertex(graph,6,19);
-    setVertex(graph,7,24);
-    setVertex(graph,8,25);
-    setVertex(graph,9,26);
-
-    printf("graph set\n");
-
-    addEdge(graph,0,3);
-    addEdge(graph,0,6);
-    addEdge(graph,6,4);
-
-    printf("edges added\n");
-
-    printGraph(graph);
-
-
+    printGraph(g);
 }
 
-void printGraph(tstGraph* graph){
-    uint16 i=0;
-    tstAdjNode* tmp;
 
-    while(i<graph->size){
-        tmp = nVertex(graph,i)->first_adj;
-        printf("%i: |%i|",i,nVertex(graph,i)->data);
-        
-        while(tmp !=NULL_PTR){
-            printf(" -> %i",nAdj2Vertex(tmp)->data);
-            tmp=tmp->next;
-        }
+void printGraph(tstGraph *g){
 
-        printf("\n");
-        i++;
+
+    tstAdjElem *tmp= g->adjListHead;
+    printf("Address is:%p\n",tmp);
+
+    while(tmp != NULL_PTR){
+        printf("Node type is:%i\n", *((tenNodeType* )(tmp->vertex)) );
+        printf("Name of student is%s\n", ((tstStudentV*)(tmp->vertex))->name );
+        printf("ID of student is%s\n\n", ((tstStudentV*)(tmp->vertex))->ID );
+        tmp=tmp->next;
+
     }
-
 }
 
-void setVertex(tstGraph* g, uint16 vertex, DT_VERTEX data){
-    nVertexData(g,vertex)=data;
+void* safeMalloc(size){
+
+    void* tmp = malloc(size);
+    if(tmp == NULL_PTR) exit(0);
+
+    return tmp;
 }
 
-tenbool addEdge(tstGraph* g, uint16 src, uint16 dst){
-    
-    tstAdjNode* node;
-    tstAdjNode* tmp;
+void addVertex(tstGraph *g, void *vertex){
 
-    if(src>= g->size || dst >= g->size) return FALSE;
-
-    node= malloc(sizeof(tstAdjNode));
-    if(node==NULL_PTR) return FALSE;
+    tstAdjElem *ptrVertex;
+  
+    //add Vertex to AdjList
     
-    node->vertex=(void*) nVertex(g,dst);
-    node->next=NULL_PTR;
-
-    tmp = nVertex(g,src)->first_adj;
+    ptrVertex= (tstAdjElem*) safeMalloc(sizeof(tstAdjElem));
+    ptrVertex->vertex= vertex;
+    ptrVertex->next=NULL_PTR;
+    ptrVertex->first_adj=NULL_PTR;
     
-    if( tmp == NULL_PTR){
-        nVertex(g,src)->first_adj=node;
+    if(g->adjListHead==NULL_PTR){ //Empty graph
+        g->adjListHead = g->adjListTail = ptrVertex;
     }else{
-        printf("here\n");
-        while( tmp->next != NULL_PTR ){
-            tmp=tmp->next;
-        }
-        tmp->next=node;
+        (g->adjListTail)->next = ptrVertex;
+        g->adjListTail = ptrVertex;
     }
 
-    return TRUE;
-
+    g->V++;
+    
 }
 
-tstGraph* createGraph(uint16 size){
+void addStudent(tstGraph *g, 
+                const char *name, 
+                const char *PLastName, 
+                const char *MLastName, 
+                const char *ID, 
+                tenStuStatus status){
+    
+    tstStudentV *tmp;
+    char* str;
+    
+    //Allocate memory
+    tmp = (tstStudentV*) safeMalloc(sizeof(tstStudentV));
+    
+    str = (char*) safeMalloc(strlen(name) 
+                    + strlen(PLastName) 
+                    + strlen(MLastName) 
+                    + strlen(ID) + 4);
+
+
+    //add parameters to node
+    tmp->NodeType=student;
+
+    strncpy(str,name,strlen(name)+1);
+    tmp->name=str;
+
+    str +=strlen(name)+1;
+
+    strncpy(str,PLastName,strlen(PLastName)+1);
+    tmp->PLastName=str;
+
+    str += strlen(PLastName)+1;
+
+    strncpy(str,MLastName,strlen(MLastName)+1);
+    tmp->MLastName=str;
+
+    str += strlen(MLastName)+1;
+
+    strncpy(str,ID,strlen(ID)+1);
+    tmp->ID=str;
+
+    tmp->Status=status;
+
+    //add vertex to graph
+
+    printf("PLastName of student added is:%s\n",tmp->PLastName);
+    addVertex(g, (void*) tmp);
+         
+}
+
+tstGraph* createGraph(void){
 
     tstGraph* tmp;
-    void* ptrGen;
-    uint16 i=9;
-
-    //if graph is created with 0 size, don't do anythingg
-    if(size==0) return NULL_PTR;
-    
-    //Allocate adjajency list for the graph
-    ptrGen= malloc(sizeof(tstVertex)*size);
-    //allocation failed for adj list
-    if(ptrGen == NULL_PTR) return NULL_PTR;
 
     //Allocate graph basic structure
     tmp= malloc(sizeof(tstGraph));
+    
     //Allocation failed for graph structure
-    if(tmp== NULL_PTR){
-        free(ptrGen);
-        return NULL_PTR;
-    }
+    if(tmp == NULL_PTR) return NULL_PTR; //can use: exit(0);
 
     //if memory allocation was sucessfull, initialize all structures and return pointer
-    tmp->size=size;
-    tmp->adjList= (tstVertex*) ptrGen;
-    
-    //initialize first adj node to null
-    while(i<size){
-        nVertex(tmp,i)->first_adj=NULL_PTR;
-        nVertex(tmp,i)->pre=NULL_PTR;
-        i++;
-    }
+    tmp->V=0;
+    tmp->E=0;
+
+    tmp->adjListHead=NULL_PTR;
+    tmp->adjListTail=NULL_PTR;
     
     return tmp;
 }
