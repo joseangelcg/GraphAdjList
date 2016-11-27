@@ -20,8 +20,13 @@
 #define getAreaVertex(tmp)          ((tstAreaV*)(tmp->vertex))
 #define getCampusVertex(tmp)        ((tstCampusV*)(tmp->vertex))
 #define getExtraVertex(tmp)         ((tstExtraV*)(tmp->vertex))
+
+
+#define nInvalidGrade           (uint8)0xFF;
+
 /**********TYPEDEFS**************/
 
+/********EDGES DEFINITIONS**************/
 typedef enum relation{
    
     courses=0, //Student-course
@@ -46,6 +51,72 @@ typedef struct node{
 
 }tstAdjNode;
 
+//student-course
+typedef enum course_state{
+    c_inCourse=0,
+    c_Approved,
+    c_Failed
+}tenCourseState;
+
+typedef struct stu_cou{
+    tenCourseState state;
+    uint8 grade;
+    uint8 semester;
+}tstStu_Cour;
+
+//student-degree
+typedef enum stu_deg_state{
+    inactive=0,
+    active
+}tenStu_DegStatus;
+
+typedef struct stu_deg{
+    uint8 initSemester;
+    uint8 finalSemester;
+    tenStu_DegStatus state;
+}tstStu_Deg;
+
+//student-campus
+typedef struct stu_camp{
+    tenbool Native;
+}tstStu_Camp;
+
+//student-extra
+typedef enum extra_state{
+    e_inCourse=0,
+    e_Approved,
+    e_Failed
+}tenExtraState;
+
+typedef struct stu_ext{
+    tenExtraState state;
+    uint8 semester;
+}tstStu_Extra;
+
+//Profesor-course
+typedef struct prof_cou{
+    char period[5];
+}tstProf_Course;
+
+//profesor-campuse
+typedef struct prof_camp{
+    tenbool active;
+}tstProf_Campus;
+
+//profesor-extra
+typedef struct prof_ext{
+    char period[5];
+}tstProf_Extra;
+
+//degree-area   
+//No information stored in this relationship
+
+//course-degree
+typedef struct cour_deg{
+    char plan[7];
+}tstCourse_Deg;
+
+/********VERTEX DEFINITIONS**************/
 typedef enum nodeType{
 
     student=0,
