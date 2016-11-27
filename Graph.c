@@ -5,6 +5,7 @@
 #include "stdlib.h"
 #include "string.h"
 
+/******       VERTEX FUNCTIONS        ******/
 void addStudent(tstGraph *g, 
                 const char *name, 
                 const char *PLastName, 
@@ -36,9 +37,13 @@ void addCampus(tstGraph *g,
 void addExtra(tstGraph *g,
                 char *name);
 
+/*           PRIVATE FUNCTIONS           */
+void searchNode(tstGraph *g, char *s);
 
 void printGraph(tstGraph *g);
+tenbool compString(char *str1, char *str2, uint8 n);
 
+/*******          MAIN              ********/
 void main(void){
 
     tstGraph* g;
@@ -52,6 +57,11 @@ void main(void){
     addCourse(g,"TC1207","Matematicas IV");
 
     printGraph(g);
+    
+    searchNode(g,"FabiaN");
+    
+    if(compString("CompUtaDoRA","CoMPuTADorA",11) == TRUE) printf("EQUALS\n");
+    else printf("NOT EQUAL\n");
 }
 
 
@@ -83,6 +93,61 @@ void printGraph(tstGraph *g){
 
         tmp=tmp->next;
 
+    }
+}
+
+tenbool compString(char *str1, char *str2, uint8 n){
+
+    uint8 i;
+    char tmp;
+    for(i=0;i<n;){
+        
+        if(str1[i]>='A' && str1[i]<='Z' || str1[i]>='a' && str1[i]<='z'){
+            if(str2[i]>='A' && str2[i]<='Z' || str2[i]>='a' && str2[i]<='z'){
+                
+                if(str2[i]<str1[i])     tmp = str1[i] - str2[i];
+                else                    tmp = str2[i] - str1[i];
+                
+                if(tmp == 0 || tmp == 0x20 || tmp == 0xE0) i++;
+                else return FALSE;
+
+            }else{
+                return FALSE;
+            }
+        }else{
+            tmp = str2[i]-str1[i];
+            if( tmp == 0 ) i++;
+        }
+    }
+    return TRUE;
+}
+
+void searchNode(tstGraph *g, char *s){
+    tstAdjElem *tmp=g->adjListHead;
+
+    while(tmp != NULL_PTR){
+        switch(getNodeType(tmp)){
+
+            case student:
+                if(compString(s,getStudentVertex(tmp)->name,strlen(s))==TRUE) printf("Encontraste a %s\n",getStudentVertex(tmp)->ID);
+
+                break;
+            case professor:
+                break;
+            case course:
+                break;
+            case degree:
+                break;
+            case area:
+                break;
+            case campus:
+                break;
+            case extra:
+                break;
+            default:
+                break;
+        }
+        tmp = tmp->next;
     }
 }
 
