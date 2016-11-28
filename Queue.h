@@ -7,10 +7,10 @@
 
 #define MAX_SIZE    100
 
-typedef struct node{
+typedef struct q_node{
 
     void *pData;
-    struct node* next;
+    struct q_node* next;
 }tstQueueNode;
 
 typedef struct queue{

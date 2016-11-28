@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-
+#include "Queue.h"
 /******       VERTEX FUNCTIONS        ******/
 void addStudent(tstGraph *g, 
                 const char *name, 
@@ -38,7 +38,7 @@ void addExtra(tstGraph *g,
                 char *name);
 
 /*           PRIVATE FUNCTIONS           */
-void searchNode(tstGraph *g, char *s);
+tstQueue* searchNodes(tstGraph *g, char *s);
 
 void printGraph(tstGraph *g);
 tenbool compString(char *str1, char *str2, uint8 n);
@@ -47,6 +47,7 @@ tenbool compString(char *str1, char *str2, uint8 n);
 void main(void){
 
     tstGraph* g;
+    tstQueue *q_AdjElem;
 
     g=createGraph();
 
@@ -58,12 +59,26 @@ void main(void){
 
     printGraph(g);
     
-    searchNode(g,"JordaN");
-    
-    if(compString("CompUtaDoRA","CoMPuTADorA",11) == TRUE) printf("EQUALS\n");
-    else printf("NOT EQUAL\n");
+    q_AdjElem = searchNodes(g,"A0122");
+    printAdjElemQueue(q_AdjElem);
 }
 
+
+void printAdjElemQueue(tstQueue *q){
+
+    
+    tstQueueNode *tmp=q->head;
+    tstAdjElem* node;
+
+    while(tmp != NULL_PTR){
+
+        node=(tstAdjElem*) tmp->pData;
+        printf("|%s| ", getStudentVertex(node)->PLastName);
+        tmp=tmp->next;
+    }
+    printf("\n");
+
+}
 
 void printGraph(tstGraph *g){
 
@@ -100,6 +115,7 @@ tenbool compString(char *str1, char *str2, uint8 n){
 
     uint8 i;
     char tmp;
+    printf("Comparing %s with %s\n",str1,str2);
     for(i=0;i<n;){
         
         if(str1[i]>='A' && str1[i]<='Z' || str1[i]>='a' && str1[i]<='z'){
@@ -117,38 +133,57 @@ tenbool compString(char *str1, char *str2, uint8 n){
         }else{
             tmp = str2[i]-str1[i];
             if( tmp == 0 ) i++;
+            else return FALSE;
         }
     }
     return TRUE;
 }
 
-void searchNode(tstGraph *g, char *s){
+tstQueue* searchNodes(tstGraph *g, char *s){
+    
+    tstQueue *q;
     tstAdjElem *tmp=g->adjListHead;
+    
+    q=CreateQueue();
 
     while(tmp != NULL_PTR){
         switch(getNodeType(tmp)){
 
             case student:
-                if(compString(s,getStudentVertex(tmp)->name,strlen(s))==TRUE) printf("Encontraste a %s\n",getStudentVertex(tmp)->ID);
-
+                if(compString(s,getStudentVertex(tmp)->name,strlen(s))==TRUE
+                || compString(s,getStudentVertex(tmp)->PLastName,strlen(s))==TRUE
+                || compString(s,getStudentVertex(tmp)->MLastName,strlen(s))==TRUE
+                || compString(s,getStudentVertex(tmp)->ID,strlen(s))==TRUE)
+                {
+                    printf("Result found... Enqueue...\n");
+                    Enqueue(q,(void*)tmp);
+                }
                 break;
             case professor:
+                printf("NOT IMPLEMENTED\n");
                 break;
             case course:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
             case degree:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
             case area:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
             case campus:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
             case extra:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
             default:
-                break;
+                 printf("NOT IMPLEMENTED\n");
+                 break;
         }
         tmp = tmp->next;
     }
+    return q;
 }
 
 void* safeMalloc(size){
@@ -166,6 +201,7 @@ void addVertex(tstGraph *g, void *vertex){
     //add Vertex to AdjList
     
     ptrVertex= (tstAdjElem*) safeMalloc(sizeof(tstAdjElem));
+    printf("ptrVertex added:%p\n",ptrVertex);
     ptrVertex->vertex= vertex;
     ptrVertex->next=NULL_PTR;
     ptrVertex->first_adj=NULL_PTR;
@@ -193,7 +229,6 @@ void addStudent(tstGraph *g,
     
     //Allocate memory
     tmp = (tstStudentV*) safeMalloc(sizeof(tstStudentV));
-    
     str = (char*) safeMalloc(strlen(name) 
                     + strlen(PLastName) 
                     + strlen(MLastName) 
