@@ -58,7 +58,7 @@ void main(void){
 
     printGraph(g);
     
-    searchNode(g,"FabiaN");
+    searchNode(g,"JordaN");
     
     if(compString("CompUtaDoRA","CoMPuTADorA",11) == TRUE) printf("EQUALS\n");
     else printf("NOT EQUAL\n");

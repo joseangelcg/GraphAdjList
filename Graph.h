@@ -8,7 +8,6 @@
 
 #define DT_VERTEX   uint16
 #define MAX_VERTEX  65535
-#define NULL_PTR    NULL
 
 /***********MACROS***********/
 #define getNodeType(tmp)     *((tenNodeType* )(tmp->vertex))
