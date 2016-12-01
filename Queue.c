@@ -86,7 +86,6 @@ tstQueue* CreateQueue(void){
     tmp->size=0;
     tmp->head=tmp->tail=NULL_PTR;
 
-    printf("Queue created\n");
     return tmp;
 }
 
@@ -108,7 +107,6 @@ void Enqueue(tstQueue *q, void *pData){
 
     q->size++;
     
-    printf("Element with add: %x enqueued.\n",pData);
 }
 
 void* Dequeue(tstQueue *q){
@@ -117,7 +115,6 @@ void* Dequeue(tstQueue *q){
     void *pData;
 
     if(q->size==0){
-        printf("Queue is empty\n\n");
         return NULL_PTR;
     }
     tmp = (q->head);
@@ -128,13 +125,11 @@ void* Dequeue(tstQueue *q){
 
     free(tmp);
 
-    printf("Element with add: %x dequeued.\n",pData);
-    
     return pData;
 }
 
 void* Peek(tstQueue *q){
 
-    return (q->head)->pData;
+    return q->size==0 ? NULL_PTR : (q->head)->pData;
 
 }

@@ -42,7 +42,8 @@ tstQueue* searchNodes(tstGraph *g, char *s);
 
 void printGraph(tstGraph *g);
 tenbool compString(char *str1, char *str2, uint8 n);
-
+void printAdjElemQueue(tstQueue *q);
+void decodeAndPrintNode(tstAdjElem* tmp);
 /*******          MAIN              ********/
 void main(void){
 
@@ -54,29 +55,84 @@ void main(void){
     addStudent(g,"Jordan Abel","Avalos","Bueno","A01227033",Active);
     addStudent(g,"Fabian","Galindo","Sanchez","A01226208",Active);
     addStudent(g,"Jorge Ernesto","Castaneda","Hernandez","A01225503",Active);
+    addStudent(g,"Jose Angel","Contreras","Godoy","A01226407",Active);
+    addStudent(g,"Miguel","Hernandez","Hernandez","A01225503",Active);
+
     addProfessor(g,"Martin","Sinsel","Gonzalez","L01227584");
+    addProfessor(g,"Luz Maria","Gomez","Hernandez","L01224744");
+    addProfessor(g,"Jose Luis","Ponce","Davalos","L01229086");
+
     addCourse(g,"TC1207","Matematicas IV");
+    addCourse(g,"TC1208","Microcontroladores");
+    addCourse(g,"TC1209","Ecuaciones Dif");
+
+    addDegree(g,"Ingenieria en Tecnologias Electronicas","ITE");
+    addDegree(g,"Ingenieria en Biomedicina","IMD");
+    addDegree(g,"Licenciatura en Derecho","LED");
+
+    addArea(g,"EIAS");
+    addArea(g,"ENH");
+
+    addCampus(g,"Campus GDA","Guadalajara");
+    addCampus(g,"Campus CEM","Estado de Mexico");
+
+    addExtra(g,"Guitarra 1");
+    addExtra(g,"Futbol");
 
     printGraph(g);
-    
-    q_AdjElem = searchNodes(g,"A0122");
+
+    q_AdjElem = searchNodes(g,"Hernandez");
     printAdjElemQueue(q_AdjElem);
 }
 
 
 void printAdjElemQueue(tstQueue *q){
-
     
-    tstQueueNode *tmp=q->head;
     tstAdjElem* node;
 
-    while(tmp != NULL_PTR){
+    while(Peek(q) != NULL_PTR){
 
-        node=(tstAdjElem*) tmp->pData;
-        printf("|%s| ", getStudentVertex(node)->PLastName);
-        tmp=tmp->next;
+        node=(tstAdjElem*) Dequeue(q);
+        decodeAndPrintNode(node);
     }
-    printf("\n");
+}
+
+void decodeAndPrintNode(tstAdjElem* tmp){
+    switch(getNodeType(tmp)){
+
+            case student:
+                printf("Name of student is: %s %s %s\n", getStudentVertex(tmp)->name, getStudentVertex(tmp)->PLastName,getStudentVertex(tmp)->MLastName);
+                printf("ID of student is: %s\n\n", getStudentVertex(tmp)->ID );
+                break;
+
+            case professor:
+                printf("Name of professor is: %s %s %s\n", getProfessorVertex(tmp)->name, getProfessorVertex(tmp)->PLastName, getProfessorVertex(tmp)->MLastName);
+                printf("ID of professor is: %s\n\n", getProfessorVertex(tmp)->ID );
+                break;
+
+            case course:
+                printf("Name of course is:%s\n",getCourseVertex(tmp)->name);
+                printf("Course ID is:%s\n\n",getCourseVertex(tmp)->CourseID);
+                break;
+            case degree:
+                printf("Name of the degree is:%s\n",getDegreeVertex(tmp)->name);
+                printf("Acronym of the degree is:%s\n\n",getDegreeVertex(tmp)->acronym);
+                break;
+            case area:
+                printf("Name of the area is:%s\n\n",getAreaVertex(tmp)->name);
+                break;
+            case campus:
+
+                printf("Name of the campus is:%s\n",getCampusVertex(tmp)->name);
+                printf("Campus location is: %s\n\n",getCampusVertex(tmp)->location);
+                break;
+            case extra:
+                printf("Name of the extra course is: %s\n\n",getExtraVertex(tmp)->name);
+                break;
+            default:
+                break;
+        }
+
 
 }
 
@@ -84,38 +140,22 @@ void printGraph(tstGraph *g){
 
 
     tstAdjElem *tmp= g->adjListHead;
+    
+    printf("############################################\n");
     printf("Number of V::%i\n",g->V);
     printf("Number of E::%i\n",g->E);
 
     while(tmp != NULL_PTR){
-        switch(getNodeType(tmp)){
-
-            case student:
-                printf("Name of student is%s\n", getStudentVertex(tmp)->name );
-                printf("ID of student is%s\n\n", getStudentVertex(tmp)->ID );
-                break;
-
-            case professor:
-                printf("Name of professor is%s\n", getProfessorVertex(tmp)->name );
-                printf("ID of professor is%s\n\n", getProfessorVertex(tmp)->ID );
-                break;
-
-            case course:
-                printf("Name of course is:%s\n",getCourseVertex(tmp)->name);
-                printf("Course ID is:%s\n\n",getCourseVertex(tmp)->CourseID);
-                break;
-        }
-
+        decodeAndPrintNode(tmp);
         tmp=tmp->next;
-
     }
+    printf("############################################\n");;
 }
 
 tenbool compString(char *str1, char *str2, uint8 n){
 
     uint8 i;
     char tmp;
-    printf("Comparing %s with %s\n",str1,str2);
     for(i=0;i<n;){
         
         if(str1[i]>='A' && str1[i]<='Z' || str1[i]>='a' && str1[i]<='z'){
@@ -155,30 +195,52 @@ tstQueue* searchNodes(tstGraph *g, char *s){
                 || compString(s,getStudentVertex(tmp)->MLastName,strlen(s))==TRUE
                 || compString(s,getStudentVertex(tmp)->ID,strlen(s))==TRUE)
                 {
-                    printf("Result found... Enqueue...\n");
                     Enqueue(q,(void*)tmp);
                 }
                 break;
             case professor:
-                printf("NOT IMPLEMENTED\n");
+                if(compString(s,getProfessorVertex(tmp)->name,strlen(s))==TRUE
+                || compString(s,getProfessorVertex(tmp)->PLastName,strlen(s))==TRUE
+                || compString(s,getProfessorVertex(tmp)->MLastName,strlen(s))==TRUE
+                || compString(s,getProfessorVertex(tmp)->ID,strlen(s))==TRUE){
+                        Enqueue(q,(void*)tmp);
+                }
                 break;
             case course:
-                 printf("NOT IMPLEMENTED\n");
-                 break;
+                if(compString(s,getCourseVertex(tmp)->name,strlen(s))==TRUE
+                || compString(s,getCourseVertex(tmp)->CourseID,strlen(s))==TRUE)
+                {
+                    Enqueue(q,(void*)tmp);
+                }
+
+                break;
             case degree:
-                 printf("NOT IMPLEMENTED\n");
-                 break;
+                if(compString(s,getDegreeVertex(tmp)->name,strlen(s))==TRUE
+                || compString(s,getDegreeVertex(tmp)->acronym,strlen(s))==TRUE)
+                {
+                    Enqueue(q,(void*)tmp);
+                }
+                break;
             case area:
-                 printf("NOT IMPLEMENTED\n");
-                 break;
+                if(compString(s,getAreaVertex(tmp)->name,strlen(s))==TRUE)
+                {
+                    Enqueue(q,(void*)tmp);
+                }
+                break;
             case campus:
-                 printf("NOT IMPLEMENTED\n");
+                if(compString(s,getCampusVertex(tmp)->name,strlen(s))==TRUE
+                || compString(s,getCampusVertex(tmp)->location,strlen(s))==TRUE)
+                {
+                    Enqueue(q,(void*)tmp);
+                }
                  break;
             case extra:
-                 printf("NOT IMPLEMENTED\n");
+                if(compString(s,getExtraVertex(tmp)->name,strlen(s))==TRUE)
+                {
+                    Enqueue(q,(void*)tmp);
+                }
                  break;
             default:
-                 printf("NOT IMPLEMENTED\n");
                  break;
         }
         tmp = tmp->next;
@@ -201,7 +263,6 @@ void addVertex(tstGraph *g, void *vertex){
     //add Vertex to AdjList
     
     ptrVertex= (tstAdjElem*) safeMalloc(sizeof(tstAdjElem));
-    printf("ptrVertex added:%p\n",ptrVertex);
     ptrVertex->vertex= vertex;
     ptrVertex->next=NULL_PTR;
     ptrVertex->first_adj=NULL_PTR;
@@ -435,7 +496,7 @@ void addExtra(tstGraph *g,
 
 
     //add parameters to node
-    tmp->NodeType=area;
+    tmp->NodeType=extra;
 
     strncpy(str,name,strlen(name)+1);
     tmp->name=str;
