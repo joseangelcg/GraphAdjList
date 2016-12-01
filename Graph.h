@@ -45,9 +45,7 @@ typedef struct node{
     tenEdgeType EdgeType;
     struct node* next;
     void* vertex; //pointer to adjacent element
-    
-    //char* info;
-
+    void* info;
 }tstAdjNode;
 
 //student-course
@@ -94,17 +92,17 @@ typedef struct stu_ext{
 
 //Profesor-course
 typedef struct prof_cou{
-    char period[5];
+    char period[6];
 }tstProf_Course;
 
-//profesor-campuse
+//profesor-campus
 typedef struct prof_camp{
     tenbool active;
 }tstProf_Campus;
 
 //profesor-extra
 typedef struct prof_ext{
-    char period[5];
+    char period[6];
 }tstProf_Extra;
 
 //degree-area   

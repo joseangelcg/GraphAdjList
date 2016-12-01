@@ -89,6 +89,13 @@ tstQueue* CreateQueue(void){
     return tmp;
 }
 
+void DeleteQueue(tstQueue* q){
+    while(Peek(q) != NULL_PTR){
+        (void)Dequeue(q);
+    }
+    free(q);
+}
+
 void Enqueue(tstQueue *q, void *pData){
 
 

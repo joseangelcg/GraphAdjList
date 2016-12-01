@@ -26,6 +26,9 @@ typedef struct queue{
 //Creates an empty queue
 tstQueue* CreateQueue(void);
 
+//Deletes an already created queue
+void DeleteQueue(tstQueue* q);
+
 //Adds an element at the end of the queue
 void Enqueue(tstQueue *q, void *pData);
 

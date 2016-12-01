@@ -36,6 +36,36 @@ void addCampus(tstGraph *g,
 
 void addExtra(tstGraph *g,
                 char *name);
+/*          EDGE FUNCTIONS PROTOTYPES       */
+
+tstStu_Cour* createStu_Cour( tenCourseState state,
+                uint8 grade,
+                uint8 semester);
+
+tstStu_Deg* createStu_Deg(
+                uint8 initSemester,
+                uint8 finalSemester,
+                tenStu_DegStatus state);
+
+tstStu_Camp* createStu_Camp(
+                tenbool native);
+
+tstStu_Extra* createStu_Extra(
+                tenExtraState state,
+                uint8 semester);
+
+tstProf_Course* createProf_Course(
+                char* period);
+
+tstProf_Campus* createProf_Campus(
+                tenbool active);
+
+tstProf_Extra* createProf_Extra(
+                char* period);
+
+tstCourse_Deg* createCourse_Deg(
+                char* plan);
+
 
 /*           PRIVATE FUNCTIONS           */
 tstQueue* searchNodes(tstGraph *g, char *s);
@@ -83,6 +113,7 @@ void main(void){
 
     q_AdjElem = searchNodes(g,"Hernandez");
     printAdjElemQueue(q_AdjElem);
+    DeleteQueue(q_AdjElem);
 }
 
 
@@ -256,6 +287,7 @@ void* safeMalloc(size){
     return tmp;
 }
 
+/*************VERTEX FUNCTION************************/
 void addVertex(tstGraph *g, void *vertex){
 
     tstAdjElem *ptrVertex;
@@ -507,6 +539,101 @@ void addExtra(tstGraph *g,
 
 }
 
+/*******************EDGES FUNCTIONS****************************/
+
+tstStu_Cour* createStu_Cour( tenCourseState state,
+                uint8 grade,
+                uint8 semester)
+{
+    tstStu_Cour *tmp;
+
+    tmp= (tstStu_Cour*) safeMalloc(sizeof(tstStu_Cour));
+    tmp->state=state;
+    tmp->grade=grade;
+    tmp->semester=semester;
+
+    return tmp;
+}
+
+tstStu_Deg* createStu_Deg(
+                uint8 initSemester,
+                uint8 finalSemester,
+                tenStu_DegStatus state)
+{
+    tstStu_Deg* tmp;
+    tmp = (tstStu_Deg*) safeMalloc(sizeof(tstStu_Deg));
+    tmp->initSemester=initSemester;
+    tmp->finalSemester=finalSemester;
+    tmp->state=state;
+
+    return tmp;
+}
+
+tstStu_Camp* createStu_Camp(
+                tenbool native)
+{
+    tstStu_Camp* tmp;
+    tmp = (tstStu_Camp*) safeMalloc(sizeof(tstStu_Camp));
+    tmp->Native=native;
+
+    return tmp;
+}
+
+tstStu_Extra* createStu_Extra(
+                tenExtraState state,
+                uint8 semester)
+{
+    tstStu_Extra* tmp;
+    tmp = (tstStu_Extra*) safeMalloc(sizeof(tstStu_Extra));
+    tmp->semester=semester;
+    tmp->state=state;
+
+    return tmp;
+}
+
+tstProf_Course* createProf_Course(
+                char* period)
+{
+    tstProf_Course* tmp;
+    tmp = (tstProf_Course*) safeMalloc(sizeof(tstProf_Course));
+    strncpy(tmp->period,period,strlen(period));
+
+    return tmp;
+}
+
+tstProf_Campus* createProf_Campus(
+                tenbool active)
+{
+    tstProf_Campus* tmp;
+    tmp = (tstProf_Campus*) safeMalloc(sizeof(tstProf_Campus));
+    tmp->active=active;
+
+    return tmp;
+}
+
+tstProf_Extra* createProf_Extra(
+                char* period)
+{
+    tstProf_Extra* tmp;
+    tmp = (tstProf_Extra*) safeMalloc(sizeof(tstProf_Extra));
+    strncpy(tmp->period,period,strlen(period));
+
+    return tmp;
+}
+
+tstCourse_Deg* createCourse_Deg(
+                char* plan)
+{
+    tstCourse_Deg* tmp;
+    tmp = (tstCourse_Deg*) safeMalloc(sizeof(tstCourse_Deg));
+    strncpy(tmp->plan,plan,strlen(plan));
+
+    return tmp;
+}
+
+
+
+//Graph constructor
 tstGraph* createGraph(void){
 
     tstGraph* tmp;
