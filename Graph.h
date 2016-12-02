@@ -220,6 +220,6 @@ typedef struct graph{
 /*******FUNCTION PROTOTYPES************/
 
 tstGraph* createGraph(void);
-tenbool addEdge(tstGraph* g,uint16 src, uint16 dst);
+tenbool addEdge(tstGraph *g, char *src, char *dst);
 
 #endif //_GRAPH_H

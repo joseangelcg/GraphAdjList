@@ -109,11 +109,14 @@ void main(void){
     addExtra(g,"Guitarra 1");
     addExtra(g,"Futbol");
 
-    printGraph(g);
 
     q_AdjElem = searchNodes(g,"Hernandez");
     printAdjElemQueue(q_AdjElem);
     DeleteQueue(q_AdjElem);
+
+    addEdge(g,"Jordan","Matematicas IV");
+
+    printGraph(g);
 }
 
 
@@ -540,6 +543,131 @@ void addExtra(tstGraph *g,
 }
 
 /*******************EDGES FUNCTIONS****************************/
+
+tenbool addEdge(tstGraph *g, char *src, char *dst){
+    tstQueue *q_src,*q_dst;
+    tstAdjElem *n_src,*n_dst;
+    tenbool boo=FALSE;
+    tenEdgeType edgeType;
+    tstAdjNode *src_curr,*new;
+    void *new_info;
+
+    q_src = searchNodes(g,src);
+    q_dst = searchNodes(g,dst);
+    if(q_src->size == 1){
+        if(q_dst->size == 1){
+            printf("Relation can be made!!\n");
+            n_src=(tstAdjElem*) Dequeue(q_src);
+            n_dst=(tstAdjElem*) Dequeue(q_dst);
+            boo=TRUE;
+        }else if(q_dst->size>1){
+            printf("Multiple references in dst. Choose only one of these:\n");
+            printAdjElemQueue(q_dst);
+            return boo;
+        }else{
+            printf("Zero references in dst. Search again");
+            return boo;
+        }
+        
+    }else if(q_src->size>1){
+        printf("Multiple references in src. Choose only one of these:\n");
+        printAdjElemQueue(q_src);
+        return boo;
+    }else{
+        printf("Zero references in src. Search again");
+        return boo;
+    }
+
+    switch(getNodeType(n_src)){
+        
+        case student:
+            switch(getNodeType(n_dst)){
+                case course:
+                    new_info= (void*)createStu_Cour(c_Approved,100,1);
+                    edgeType=courses;
+                    break;
+                case degree:
+                    new_info= (void*)createStu_Deg(1,9,active);
+                    edgeType=isPartTo;
+                    break;
+                 case campus:
+                    new_info= (void*)createStu_Camp(TRUE);
+                    edgeType=studiesIn;
+                    break;
+                case extra:
+                    new_info= (void*)createStu_Extra(e_Approved,1);
+                    edgeType=coursesE;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        
+        case professor:
+            switch(getNodeType(n_dst)){
+                case course:
+                    edgeType=teaches;
+                    new_info= (void*)createProf_Course("XXXXX");
+                    break;
+                 case campus:
+                    new_info= (void*)createProf_Campus(TRUE);
+                    edgeType=teachesIn;
+                    break;
+                case extra:
+                    new_info= (void*)createProf_Extra("XXXXX");
+                    edgeType=teachesE;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        
+        case course:
+            switch(getNodeType(n_dst)){
+                case degree:
+                    new_info=createCourse_Deg("ITE11");
+                    edgeType=partOfPlan;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        
+        case degree:
+            switch(getNodeType(n_dst)){
+                case area:
+                    new_info=NULL_PTR;
+                    edgeType=belongsTo;
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    src_curr=n_src->first_adj;
+    if(src_curr !=NULL_PTR){
+        while(src_curr->next != NULL_PTR) src_curr=src_curr->next;
+    }
+
+    new=(tstAdjNode*) safeMalloc(sizeof(tstAdjNode));
+    new->EdgeType=edgeType;
+    new->next=NULL_PTR;
+    new->vertex= n_dst->vertex;
+    new->info=new_info;
+
+    if(src_curr==NULL_PTR) src_curr=new;
+    else src_curr->next=new;
+    g->E++;   
+    
+    DeleteQueue(q_src);
+    DeleteQueue(q_dst);
+    return boo;
+    
+}
 
 tstStu_Cour* createStu_Cour( tenCourseState state,
                 uint8 grade,
